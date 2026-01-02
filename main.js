@@ -1,3 +1,7 @@
+// Импорт менеджера спавна
+/** @type {import('./spawnManager')} */
+const spawnManager = require('spawnManager');
+
 // Импорт логики роли харвестера
 /** @type {import('./role.harvester')} */
 const roleHarvester = require('role.harvester');
@@ -20,10 +24,7 @@ module.exports.loop = function () {
     }
   }
 
-  // Подсчёт крипов каждой роли
-  const harvesters = _.filter(Game.creeps, (creep) => creep.memory.role === 'harvester');
-  const upgraders = _.filter(Game.creeps, (creep) => creep.memory.role === 'upgrader');
-  const builders = _.filter(Game.creeps, (creep) => creep.memory.role === 'builder');
+  spawnManager.run();
 
   // Перебор всех живых крипов и запуск поведения в зависимости от роли
   for (const name in Game.creeps) {
