@@ -1,3 +1,6 @@
+// Отладочная информация
+const DEBUG_SPAWN = true;
+
 const spawnManager = {
   run: function () {
     // Получаем первый спавн в игре (можно улучшить, если будет несколько спавнов)
@@ -19,14 +22,22 @@ const spawnManager = {
       // Спавн крипов с ролью Harvester
       if (harvesters.length < desiredCounts.harvester) {
         const newName = 'Harvester' + Game.time;
-        console.log('Spawning new harvester: ' + newName);
-        spawn.spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: 'harvester' } });
+        const result = spawn.spawnCreep([WORK, CARRY, MOVE], newName, {
+          memory: { role: 'harvester' },
+        });
+        if (DEBUG_SPAWN && result === OK) {
+          console.log('Spawning new harvester: ' + newName);
+        }
       }
       // Спавн крипов с ролью Upgrader
       else if (upgraders.length < desiredCounts.upgrader) {
         const newName = 'Upgrader' + Game.time;
-        console.log('Spawning new upgrader: ' + newName);
-        spawn.spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: 'upgrader' } });
+        const result = spawn.spawnCreep([WORK, CARRY, MOVE], newName, {
+          memory: { role: 'upgrader' },
+        });
+        if (DEBUG_SPAWN && result === OK) {
+          console.log('Spawning new upgrader: ' + newName);
+        }
       }
 
       // Спавн крипов с ролью Builder
@@ -36,8 +47,12 @@ const spawnManager = {
         // Спавним билдера только если есть строительные площадки
         if (siteCount > 0) {
           const newName = 'Builder' + Game.time;
-          console.log('Spawning new builder: ' + newName);
-          spawn.spawnCreep([WORK, CARRY, MOVE], newName, { memory: { role: 'builder' } });
+          const result = spawn.spawnCreep([WORK, CARRY, MOVE], newName, {
+            memory: { role: 'builder' },
+          });
+          if (DEBUG_SPAWN && result === OK) {
+            console.log('Spawning new builder: ' + newName);
+          }
         }
       }
     }
