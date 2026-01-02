@@ -20,8 +20,11 @@ const spawnManager = {
     // Подсчёт строительных площадок
     const siteCount = spawn.room.find(FIND_CONSTRUCTION_SITES).length;
 
-    // Если нет строительных площадок уменьшаем количество строителей
-    if (siteCount === 0) {
+    // Подсчёт структур, что нужно починить
+    const repairCount = spawn.room.find(FIND_STRUCTURES).filter((s) => s.hits < s.hitsMax).length;
+
+    // Если нет структур для постройки или починки, уменьшаем количество строителей
+    if (siteCount === 0 && repairCount === 0) {
       desiredCounts.builder = 0;
     }
 
