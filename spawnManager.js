@@ -23,9 +23,25 @@ const spawnManager = {
     // Подсчёт структур, что нужно починить
     const repairCount = spawn.room.find(FIND_STRUCTURES).filter((s) => s.hits < s.hitsMax).length;
 
+    // Подсчёт структур, что нуждаются в энергии
+    const energyCount = spawn.room
+      .find(FIND_STRUCTURES)
+      .filter(
+        (s) =>
+          (s.structureType === STRUCTURE_SPAWN ||
+            s.structureType === STRUCTURE_EXTENSION ||
+            s.structureType === STRUCTURE_TOWER) &&
+          s.store.getFreeCapacity(RESOURCE_ENERGY) > 0,
+      ).length;
+
     // Если нет структур для постройки или починки, уменьшаем количество строителей
     if (siteCount === 0 && repairCount === 0) {
       desiredCounts.builder = 0;
+    }
+
+    // Если нет структур без энергии, уменьшаем количество харвестеров
+    if (energyCount === 0) {
+      desiredCounts.harvester = 1;
     }
 
     // Уничтожаем крипов, если их больше, чем нужно
