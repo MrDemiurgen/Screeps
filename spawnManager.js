@@ -39,8 +39,15 @@ const spawnManager = {
       desiredCounts.builder = 0;
     }
 
-    // Если нет структур без энергии, уменьшаем количество харвестеров
-    if (energyCount === 0) {
+    // Если нет структур без энергии или EXTENSION И TOWER, уменьшаем количество харвестеров
+    if (
+      energyCount === 0 ||
+      spawn.room
+        .find(FIND_STRUCTURES)
+        .filter(
+          (s) => s.structureType === STRUCTURE_EXTENSION || s.structureType === STRUCTURE_TOWER,
+        ).length === 0
+    ) {
       desiredCounts.harvester = 1;
     }
 
