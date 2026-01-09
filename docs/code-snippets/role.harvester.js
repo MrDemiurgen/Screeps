@@ -9,16 +9,33 @@ const roleHarvester = {
     // Читаем текущее состояние в локальную переменную
     let state = creep.memory.state;
 
+    // Ищем структуры, которым нужна энергия: Spawn / Extension / Tower
+    const targets = creep.room.find(FIND_STRUCTURES, {
+      filter: (structure) => {
+        return (
+          (structure.structureType === STRUCTURE_EXTENSION ||
+            structure.structureType === STRUCTURE_SPAWN ||
+            structure.structureType === STRUCTURE_TOWER) &&
+          structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
+        );
+      },
+    });
+
     // --- Переключение состояний ---
 
     // Если отдаём энергию и инвентарь пустой → переходим к добыче
-    if (state === 'delivering' && creep.store.getUsedCapacity() === 0) {
+    if ((state === 'delivering' || state === 'upgrading') && creep.store.getUsedCapacity() === 0) {
       state = 'harvesting';
     }
 
     // Если добываем и инвентарь заполнен → переходим к доставке
     if (state === 'harvesting' && creep.store.getFreeCapacity() === 0) {
       state = 'delivering';
+    }
+
+    // Если нет цели → переходим к улучшению контроллера
+    if (state === 'delivering' && targets.length === 0) {
+      state = 'upgrading';
     }
 
     // --- Поведение в каждом состоянии ---
@@ -39,22 +56,22 @@ const roleHarvester = {
 
     // 2. Состояние "доставка энергии"
     else if (state === 'delivering') {
-      // Ищем структуры, которым нужна энергия: Spawn / Extension / Tower
-      const targets = creep.room.find(FIND_STRUCTURES, {
-        filter: (structure) => {
-          return (
-            (structure.structureType === STRUCTURE_EXTENSION ||
-              structure.structureType === STRUCTURE_SPAWN ||
-              structure.structureType === STRUCTURE_TOWER) &&
-            structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
-          );
-        },
-      });
-
       // Если есть хотя бы одна подходящая структура → несем ей энергию
       if (targets.length > 0) {
         if (creep.transfer(targets[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
           creep.moveTo(targets[0], {
+            visualizePathStyle: { stroke: '#ffffff' },
+          });
+        }
+      }
+    }
+
+    // 3. Состояние "Улучшение контроллера"
+    else if (state === 'upgrading') {
+      // Если есть контроллер → несем ему энергию
+      if (creep.room.controller) {
+        if (creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) {
+          creep.moveTo(creep.room.controller, {
             visualizePathStyle: { stroke: '#ffffff' },
           });
         }

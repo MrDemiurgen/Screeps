@@ -88,7 +88,7 @@ const roleBuilder = {
       }
     }
 
-    // 2. Состояние "строительство"
+    // 2. Состояние "починка"
     else if (state === 'repairing') {
       const target = Game.getObjectById(creep.memory.targetId);
       if (target) {
