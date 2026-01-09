@@ -23,9 +23,14 @@ const roleHarvester = {
 
     // --- Переключение состояний ---
 
-    // Если отдаём энергию и инвентарь пустой → переходим к добыче
+    // Если инвентарь пустой → переходим к добыче
     if ((state === 'delivering' || state === 'upgrading') && creep.store.getUsedCapacity() === 0) {
       state = 'harvesting';
+    }
+
+    // Если появились цели во время улучшения → переходим к доставке
+    if (state === 'upgrading' && targets.length > 0) {
+      state = 'delivering';
     }
 
     // Если добываем и инвентарь заполнен → переходим к доставке
